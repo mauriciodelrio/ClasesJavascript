@@ -33,26 +33,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
   /* PARTE 2 creamos el evento para ir añadiendo elementos a nuestra lista */
   document.getElementById("add-item").addEventListener("click", function(event) {
     event.preventDefault()
+    // creamos el objeto inicialmente que tendrá los valores ingresados por el input más el id el cual inicialmente no lo sabemos
     let item = {
       id: null,
       value : document.getElementById("input-add").value
     }
+    // verificamos si ya había una lista en nuestro local storage
     let lista = window.localStorage.getItem("lista")
+    // asignamos un largo de lista inicial el cuál es 1, ya que sí o sí agregaremos un elemento a la lista aunque esté vacía
     let lengthLista = 1
+    // si la lista no está vacía, la transformamos en JSON
     if(lista) {
       lista = JSON.parse(lista)
+      // aladimos el elemento ingresado por input a la lista
       lista.push(item)
+      // le damos su id, el cual siempre será el largo de la lista menos uno, ya que la función push lo añade al final
       item.id = lista.length - 1
       lengthLista = lista.length
     }
     else {
+      // si es el primer elemento entonces sabemos que su id parte desde 0, creamos la lista con un elemento
       item.id = 0
       lista = [item]
       lengthLista = lista.length
     }
+    // limpiamos el valor del input
     document.getElementById("input-add").value = ""
-
+    // guardamos nuestra lista actualizada en local storage
     window.localStorage.setItem("lista", JSON.stringify(lista))
+    // ahora añadiremos visualmente el elemento a la lista usando un div que contendrá el li
     let li = document.createElement("div")
     li.id = lengthLista - 1;
     li.innerHTML = `
@@ -63,29 +72,41 @@ document.addEventListener("DOMContentLoaded", function(event) {
         </button>
       </li>
     `
+    // añadimos el li al ul
     ul.appendChild(li)
 
+    /* PARTE 3: remover un elemento de la lista 
+    Esta parte puede ser un poco más complicada puesto que debemos remover el elemento en específico, para ello vamos a validar 
+    contra el name del elemento
+    El elemento click del botón eliminar debe quedar asociado a cada elemento de la lista
+    */
     document.getElementsByName(lengthLista - 1)[0].addEventListener("click", function(event) {
       event.preventDefault()
+      // guardamos el nombre del elemento que se va a eliminar
       let name =event.target.name
-      console.log("name", name)
+      // obtenemos nuestra lista desde local storage
       let lista = window.localStorage.getItem("lista")
+      // si existe lista eliminaremos el elemento seleccionado
       if(lista) {
         lista = JSON.parse(lista)
         lista = lista.filter(function(item, index) {
           return item.id != Number(name)
         })
-        console.log(lista)
+        // filter no entregará todos los elementos de la lista, excepto el que queremos eliminar
       }
+      // volvemos a guardar nuestra lista actualizada en local storage
       window.localStorage.setItem("lista", JSON.stringify(lista))
+      // eliminamos de nuestro HTML el elemento de la lista seleccionado
       document.getElementById(name).remove()
     })
     
-
   })
+  /* PARTE 4: Eliminar todos los elementos de una lista */
   document.getElementById("remove-items").addEventListener("click", function(event) {
     event.preventDefault()
+    // eliminamos todos los elementos de la lista en local storage
     window.localStorage.removeItem("lista")
+    // reemplazamos lista-items por un HTML vacío
     document.getElementById("lista-items").innerHTML = ""
   })
 });
