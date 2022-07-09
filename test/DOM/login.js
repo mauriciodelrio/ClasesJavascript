@@ -5,6 +5,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementById("email").value = data.email;
     document.getElementById("password").value = data.password;
   }
+  // Creamos el componente de logged in pero se oculta inicialmente
+  // obtenemos el div padre
+  let content = document.getElementById("div-content")
+  // creamos un div de reemplazo
+  let divLogged = document.createElement("div")
+  divLogged.classList.add("logged-in")
+  content.appendChild(divLogged)
+  // creamos el contenido que reemplazará los valores dinámicamente
+  divLogged.appendChild(document.createElement("h3")).id = "logged-in-title"
+  divLogged.appendChild(document.createElement("p")).id = "logged-in-text"
+  // añadimos un botón para cerrar sesión
+  divLogged.appendChild(document.createElement("button")).id = "logout"
+  document.getElementById("logout").appendChild(document.createTextNode("Logout"))
+  document.getElementById("logout").classList.add("btn", "btn-danger")
+  document.getElementsByClassName("logged-in")[0].style.display = "none"
   // creamos el event listener para presionar el botón login
   document.getElementById("login").addEventListener("click", function(event) {
     // siempre al hacer click en un evento on click debemos poner un prevent default para que no se ejecute el evento por defecto
@@ -20,25 +35,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     if(data.email && data.password) {
       // guardamos los valores en local storage
       window.localStorage.setItem('login', JSON.stringify(data))
-      // ahora como ya iniciamos sesión reemplazaremos el formulario por un mensaje de bienvenida
-      // obtenemos el div padre
-      let content = document.getElementById("div-content")
       // ocultamos el formulario
       document.getElementById("form-login").style.display = "none"
-      // creamos un div de reemplazo
-      let divLogged = document.createElement("div")
-      divLogged.classList.add("logged-in")
-      content.appendChild(divLogged)
-      // creamos el contenido que reemplazará los valores dinámicamente
-      divLogged.appendChild(document.createElement("h3")).id = "logged-in-title"
-      divLogged.appendChild(document.createElement("p")).id = "logged-in-text"
       document.getElementById("logged-in-title").innerHTML = `Bienvenido ${data.email}`
       document.getElementById("logged-in-text").innerHTML = ` Este texto solamente lo puedes ver porque has iniciado sesión.`
-      // añadimos un botón para cerrar sesión
-      divLogged.appendChild(document.createElement("button")).id = "logout"
-      document.getElementById("logout").appendChild(document.createTextNode("Logout"))
-      document.getElementById("logout").classList.add("btn", "btn-danger")
-
+      document.getElementsByClassName("logged-in")[0].style.display = "block"
       // creamos un event listener para el botón logout
       document.getElementById("logout").addEventListener("click", function() {
         // eliminamos los datos de local storage al cerrar sesión
